@@ -1,9 +1,9 @@
 var { GraphQLNonNull, GraphQLString } = require('graphql')
-var User = require('../types/user');
+var Phonebook = require('../types/phonebook');
 var services = require('../../services');
 
 exports.add = {
-    type: User.userType,
+    type: Phonebook.phonebookType,
     args: {
         id: {
             type: new GraphQLNonNull(GraphQLString),
@@ -16,6 +16,6 @@ exports.add = {
         }
     },
     resolve(root, params) {
-        return services.createUser(params);
+        return services.createPhonebook(params);
     }
 }

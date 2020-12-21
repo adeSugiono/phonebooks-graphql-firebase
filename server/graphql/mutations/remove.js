@@ -1,15 +1,15 @@
 var { GraphQLNonNull, GraphQLString } = require('graphql')
-var User = require('../types/user');
+var Phonebook = require('../types/phonebook');
 var services = require('../../services');
 
 exports.remove = {
-  type: User.userType,
+  type: Phonebook.phonebookType,
   args: {
     id: {
       type: new GraphQLNonNull(GraphQLString)
     }
   },
   resolve(root, params) {
-    return services.deleteUser(params);
+    return services.deletePhonebook(params);
   }
 }

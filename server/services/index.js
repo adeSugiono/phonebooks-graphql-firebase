@@ -1,6 +1,6 @@
 const firebase = require("firebase");
 
-const getPhone = () => {
+const getPhonebooks = () => {
     const phoneReference = firebase.database().ref("/phonebook/");
     return (new Promise((resolve, reject) => {
         phoneReference.on("value", function (snapshot) {
@@ -20,48 +20,48 @@ const getPhone = () => {
 }
 
 //Create new instance
-const createPhone = (user) => {
-    const referencePath = `/Users/${user.id}/`;
+const createPhonebooks = (phone) => {
+    const referencePath = `/phonebook/${phone.id}/`;
     const phoneReference = firebase.database().ref(referencePath);
     return (new Promise((resolve, reject) => {
-        phoneReference.set({ name: user.name, phone: user.phone }, (error) => {
+        phoneReference.set({ name: phone.name, phone: phone.phone }, (error) => {
             if (error) {
                 reject("Data could not be deleted." + error);
             } else {
-                resolve(user);
+                resolve(phone);
             }
         });
     }));
 }
 
 //Update existing instance
-const updatePhone = (user) => {
-    var referencePath = `/phonebook/${user.id}/`;
+const updatePhonebooks = (phone) => {
+    var referencePath = `/phonebook/${phone.id}/`;
     var phoneReference = firebase.database().ref(referencePath);
     return (new Promise((resolve, reject) => {
-        phoneReference.update({ name: user.name, phone: user.phone }, (error) => {
+        phoneReference.update({ name: phone.name, phone: phone.phone }, (error) => {
             if (error) {
                 reject("Data could not be deleted." + error);
             } else {
-                resolve(user);
+                resolve(phone);
             }
         });
     }));
 }
 
 //Delete an instance
-const deletePhone = (user) => {
-    var referencePath = `/phonebook/${user.id}/`;
+const deletePhonebooks = (phone) => {
+    var referencePath = `/phonebook/${phone.id}/`;
     var phoneReference = firebase.database().ref(referencePath);
     return (new Promise((resolve, reject) => {
         phoneReference.remove((error) => {
             if (error) {
                 reject("Data could not be deleted." + error);
             } else {
-                resolve(user);
+                resolve(phone);
             }
         })
     }));
 }
 
-module.exports = { getPhone, createPhone, updatePhone, deletePhone }
+module.exports = { getPhonebooks, createPhonebooks, updatePhonebooks, deletePhonebooks }
