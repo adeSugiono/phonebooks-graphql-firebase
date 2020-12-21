@@ -1,11 +1,12 @@
-import axios from 'axios';
+import ApolloClient from 'apollo-boost';
+import gql from 'graphql-tag';
 
+const API_URL = 'http://localhost:5000/graphql/'
 
-const request = axios.create({
-    baseURL: 'http://localhost:5000/api',
-    timeout: 1000,
-    headers: { 'X-Custom-Header': 'foobar' }
+const client = new ApolloClient({
+    uri: API_URL
 });
+
 
 // start load phonebooks data
 export const loadPhonebookSuccess = (phonebooks) => ({
@@ -18,10 +19,21 @@ export const loadPhonebooksFailure = () => ({
 })
 
 export const loadPhonebooks = () => {
+    const phonebooksQuery = gql`
+    query {
+      phonebooks{
+        id
+        name
+        phone
+      }
+    }`;
     return dispatch => {
-        return request.get('phonebooks')
+        return client.query({
+            query: phonebooksQuery,
+        })
             .then(function (response) {
-                dispatch(loadPhonebookSuccess(response.data))
+                console.log(response);
+                dispatch(loadPhonebookSuccess(response.data.phonebooks))
             })
             .catch(function (error) {
                 console.error(error);
@@ -35,11 +47,11 @@ export const loadPhonebooks = () => {
 export const addPhonebookSuccess = (phonebooks) => ({
     type: 'ADD_PHONEBOOKS_SUCCESS',
     phonebooks
-})
+});
 
 export const addPhonebooksFailure = (id) => ({
     type: 'ADD_PHONEBOOKS_FAILURE', id
-})
+});
 
 const addPhonebooksRedux = (id, name, phone) => ({
     type: 'ADD_PHONEBOOKS', id, name, phone
@@ -48,9 +60,24 @@ const addPhonebooksRedux = (id, name, phone) => ({
 
 export const addPhonebooks = (name, phone) => {
     const id = Date.now();
+    const addQuery = gql`
+    mutation addPhonebooks( $id: ID!, $name: String!, $phone: String!) {
+      addPhonebooks( id: $id, name: $name, phone: $phone) {
+        id
+        name
+        phone
+      }
+    }`;
     return dispatch => {
         dispatch(addPhonebooksRedux(id, name, phone))
-        return request.post('phonebooks', { id, name, phone })
+        return client.mutate({
+            mutation: addQuery,
+            variables: {
+                id,
+                name,
+                phone
+            }
+        })
             .then(function (response) {
                 dispatch(addPhonebookSuccess(response.data))
             })
@@ -76,9 +103,24 @@ const editPhonebooksRedux = (id, name, phone) => ({
 })
 
 export const editPhonebooks = (id, name, phone) => {
+    const updateQuery = gql`
+    mutation updatePhonebooks($id: ID!, $name: String!, $phone: String!){
+        updatePhonebooks(id: $id, name: $name, phone: $phone){
+            id,
+            name,
+            phone
+        }
+    }`;
     return dispatch => {
         dispatch(editPhonebooksRedux(id, name, phone))
-        return request.put(`phonebooks/${id}`, { name, phone })
+        return client.mutate({
+            mutation: updateQuery,
+            variables: {
+                id,
+                name,
+                phone
+            }
+        })
             .then(function (response) {
                 dispatch(editPhonebookSuccess(response.data))
             })
@@ -94,8 +136,9 @@ const deletePhonebooksRedux = (id) => ({
     type: 'DELETE_PHONEBOOKS', id
 })
 
-export const deletePhonebookSuccess = () => ({
-    type: 'DELETE_PHONEBOOKS_SUCCESS'
+export const deletePhonebookSuccess = (phonebooks) => ({
+    type: 'DELETE_PHONEBOOKS_SUCCESS',
+    phonebooks
 })
 
 export const deletePhonebooksFailure = () => ({
@@ -104,11 +147,22 @@ export const deletePhonebooksFailure = () => ({
 
 
 export const deletePhonebooks = (id) => {
+    const deleteQuery = gql`
+    mutation removePhonebooks($id: ID!) {
+      removePhonebooks(id: $id) {
+        id
+      }
+    }`;
     return dispatch => {
         dispatch(deletePhonebooksRedux(id))
-        return request.delete(`phonebooks/${id}`)
+        return client.mutate({
+            mutation: deleteQuery,
+            variables: {
+                id
+            }
+        })
             .then(function (response) {
-                dispatch(deletePhonebookSuccess())
+                dispatch(deletePhonebookSuccess(response))
             })
             .catch(function (error) {
                 console.error(error);
@@ -129,14 +183,29 @@ export const resendPhonebooksFailure = () => ({
 })
 
 export const resendPhonebooks = (id, name, phone) => {
+    const deleteQuery = gql`
+    mutation updatePhonebooks($id: ID!, $name: String!, $phone: String!) {
+      updatePhonebooks(id: $id, name: $name, phone: $phone) {
+        id
+        name
+        phone
+      }
+    }`;
     return dispatch => {
-        return request.post('phonebooks', { id, name, phone })
+        return client.mutate({
+            mutation: deleteQuery,
+            variables: {
+                id,
+                name,
+                phone
+            }
+        })
             .then(function (response) {
-                dispatch(resendPhonebookSuccess(id))
+                dispatch(resendPhonebookSuccess(response))
             })
             .catch(function (error) {
                 console.error(error);
-                dispatch(resendPhonebooksFailure())
+                dispatch(resendPhonebooksFailure(id))
             });
     }
 }

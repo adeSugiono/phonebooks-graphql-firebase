@@ -6,7 +6,6 @@ const { graphqlHTTP } = require("express-graphql");
 const cors = require('cors');
 const firebase = require("firebase");
 
-
 const firebaseConfig = {
     apiKey: "AIzaSyAN6RGs98SjeIE6ZP4dlGH247NqddpJak4",
     authDomain: "phonebook-34c59.firebaseapp.com",
@@ -15,7 +14,7 @@ const firebaseConfig = {
     storageBucket: "phonebook-34c59.appspot.com",
     messagingSenderId: "665604432601",
     appId: "1:665604432601:web:dd80dee3dfc2dcbdfb14c8",
-    measurementId: "G-XMVW1EW4WC"
+    //measurementId: "G-XMVW1EW4WC"
   };
 firebase.initializeApp(firebaseConfig);
 
