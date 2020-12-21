@@ -1,0 +1,32 @@
+{
+    phonebooks {
+      id
+     name
+      phone
+    }
+}
+  
+  
+  mutation {
+    addPhonebooks(id: "green",name: "barry allan", phone: "17") {
+      id
+     name
+      phone
+    }
+}
+  
+  
+  mutation {
+    updatePhonebooks(id: "green",name: "peter", phone: "30") {
+      id
+     name
+      phone
+    }
+}
+  
+  
+  mutation {
+    removePhonebooks(id: "green") {
+      id
+    }
+}
